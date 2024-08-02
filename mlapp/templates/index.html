@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>House Price Prediction</title>
+</head>
+<body>
+    <h1>Upload CSV File</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <input type="submit" value="Upload" />
+    </form>
+    <h1>Enter Data Manually</h1>
+    <form action="/manual" method="post" id="manual-form">
+        <textarea name="data" rows="10" cols="30" placeholder='[{"feature1": value1, "feature2": value2, ...}]'></textarea>
+        <input type="submit" value="Submit" />
+    </form>
+    <h1>Save or Load Model</h1>
+    <button onclick="saveModel()">Save Model</button>
+    <button onclick="loadModel()">Load Model</button>
+    <script>
+        document.getElementById('manual-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch('/manual', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: JSON.parse(document.querySelector('textarea[name="data"]').value) })
+            })
+            .then(response => response.json())
+            .then(data => alert('Mean Squared Error: ' + data.mean_squared_error));
+        });
+
+        function saveModel() {
+            fetch('/save-model', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => alert(data.message));
+        }
+
+        function loadModel() {
+            fetch('/load-model', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => alert(data.message));
+        }
+    </script>
+</body>
+</html>
